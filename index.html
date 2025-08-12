@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* All the CSS styles from the previous response will go here. No changes needed in this section. */
         :root {
             --primary-color: #007bff;
             --secondary-color: #28a745;
@@ -309,35 +308,6 @@
         .page.active {
             display: block;
         }
-
-        /* New styles for Referral section */
-        .referral-card {
-            margin-top: 20px;
-        }
-        .referral-link-box {
-            background-color: #f8f9fa;
-            border: 1px dashed var(--primary-color);
-            border-radius: 8px;
-            padding: 10px;
-            margin-top: 10px;
-            word-break: break-all;
-            font-size: 14px;
-            color: var(--text-color);
-        }
-        .copy-btn {
-            background-color: var(--primary-color);
-            color: #fff;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 8px;
-            margin-top: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background-color 0.3s;
-        }
-        .copy-btn:hover {
-            background-color: #0056b3;
-        }
     </style>
 </head>
 <body>
@@ -374,18 +344,12 @@
                         <div class="dashboard-item-label">Ads Watched</div>
                     </div>
                 </div>
-                <div class="card referral-card" style="margin-top: 20px;">
+                <div class="card" style="margin-top: 20px;">
                     <div class="card-header">
                         <span class="material-icons">group</span>
                         Total Referrals
                     </div>
                     <div class="dashboard-item-value" id="total-referrals">0</div>
-                    <h4 style="margin-top: 20px; margin-bottom: 5px;">Share your referral link to earn more!</h4>
-                    <div class="referral-link-box" id="referral-link-box">Your referral link will appear here.</div>
-                    <button class="copy-btn" id="copy-referral-btn">
-                        <span class="material-icons" style="font-size: 16px; vertical-align: middle;">content_copy</span>
-                        Copy Link
-                    </button>
                 </div>
             </section>
 
@@ -456,17 +420,13 @@
             <section id="profile-page" class="page">
                 <div class="card" style="padding: 30px;">
                     <div style="width: 80px; height: 80px; border-radius: 50%; background-color: #eee; margin: 0 auto 15px; overflow: hidden; border: 2px solid var(--primary-color);">
-                        <img src="https://via.placeholder.com/80" id="profile-pic" alt="Profile Picture" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="https://via.placeholder.com/80" alt="Profile Picture" style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
-                    <h3 style="margin: 0; font-weight: 600;" id="profile-name">User Name</h3>
-                    <p style="margin: 5px 0 0; color: var(--light-text-color); font-size: 14px;" id="profile-username">@username</p>
+                    <h3 style="margin: 0; font-weight: 600;">A M Imran</h3>
+                    <p style="margin: 5px 0 0; color: var(--light-text-color); font-size: 14px;">@IMRANLabBD</p>
                 </div>
                 <div class="profile-info">
                     <h4 style="margin-top: 0;">My Profile</h4>
-                    <div class="profile-info-row">
-                        <span class="profile-label">Telegram ID</span>
-                        <span class="profile-value" id="telegram-id">Not logged in</span>
-                    </div>
                     <div class="profile-info-row">
                         <span class="profile-label">Current Balance</span>
                         <span class="profile-value" id="profile-balance">BDT 0.00</span>
@@ -517,95 +477,17 @@
             const startEarningBtn = document.getElementById('start-earning-btn');
             const withdrawBtn = document.getElementById('withdraw-btn');
             const withdrawForm = document.getElementById('withdraw-form');
-            const copyReferralBtn = document.getElementById('copy-referral-btn');
-
-            // --- Server Configuration ---
-            const BACKEND_URL = 'https://your-backend-api.com'; // Replace with your actual backend URL
 
             // --- Initial Data Setup ---
             const DAILY_ADS_LIMIT = 50;
             const AD_REWARD = 0.02; // BDT per ad
             const MIN_WITHDRAW_AMOUNT = 100;
 
-            // Function to parse URL parameters
-            function getUrlParameter(name) {
-                name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-                const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-                const results = regex.exec(location.search);
-                return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-            }
-            
-            const telegram_id = getUrlParameter('user_id');
-            const username = getUrlParameter('username');
-            const first_name = getUrlParameter('first_name');
-            const last_name = getUrlParameter('last_name');
-            const photo_url = getUrlParameter('photo_url');
-            const referral_id = getUrlParameter('ref');
-            
-            // Function to sync user data with backend
-            async function syncUserWithBackend(telegram_data, referral_data) {
-                try {
-                    const response = await fetch(`${BACKEND_URL}/sync`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            telegram_data: telegram_data,
-                            referral_id: referral_data
-                        })
-                    });
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        // Store backend data in local storage
-                        localStorage.setItem('user', JSON.stringify(data.user));
-                        localStorage.setItem('earnings', data.earnings);
-                        localStorage.setItem('adsWatched', data.adsWatched);
-                        localStorage.setItem('totalReferrals', data.totalReferrals);
-                        localStorage.setItem('weeklyEarnings', JSON.stringify(data.weeklyEarnings));
-                        updateUI();
-                        console.log('User data synced successfully with backend.');
-                        
-                        // Show referral success message if applicable
-                        if (data.referralSuccess) {
-                            alert(data.referralMessage);
-                        }
-                    } else {
-                        console.error('Backend sync failed:', data.message);
-                    }
-                } catch (error) {
-                    console.error('Error syncing with backend:', error);
-                    // Fallback to local storage if backend is unavailable
-                    if (!localStorage.getItem('user')) {
-                        const defaultUser = { name: 'Guest User', username: 'guest', photo_url: 'https://via.placeholder.com/80', id: 'Not logged in' };
-                        localStorage.setItem('user', JSON.stringify(defaultUser));
-                        localStorage.setItem('earnings', 0);
-                        localStorage.setItem('adsWatched', 0);
-                        localStorage.setItem('totalReferrals', 0);
-                        localStorage.setItem('weeklyEarnings', JSON.stringify([10, 20, 40, 80, 60, 50, 90]));
-                    }
-                    updateUI();
-                }
-            }
-
-            // Call sync function on app load
-            if (telegram_id) {
-                const user_data = { id: telegram_id, username: username, first_name: first_name, last_name: last_name, photo_url: photo_url };
-                syncUserWithBackend(user_data, referral_id);
-                // Clear URL parameters to prevent repeated processing on refresh
-                window.history.replaceState({}, document.title, location.pathname);
-            } else {
-                // If no telegram_id, just load data from local storage
-                if (!localStorage.getItem('user')) {
-                     const defaultUser = { name: 'Guest User', username: 'guest', photo_url: 'https://via.placeholder.com/80', id: 'Not logged in' };
-                     localStorage.setItem('user', JSON.stringify(defaultUser));
-                     localStorage.setItem('earnings', 0);
-                     localStorage.setItem('adsWatched', 0);
-                     localStorage.setItem('totalReferrals', 0);
-                     localStorage.setItem('weeklyEarnings', JSON.stringify([10, 20, 40, 80, 60, 50, 90]));
-                }
-                updateUI();
+            if (!localStorage.getItem('earnings')) {
+                localStorage.setItem('earnings', 0);
+                localStorage.setItem('adsWatched', 0);
+                localStorage.setItem('totalReferrals', 0);
+                localStorage.setItem('weeklyEarnings', JSON.stringify([10, 20, 40, 80, 60, 50, 90])); // Sample weekly data
             }
 
             // --- UI Update Function ---
@@ -614,7 +496,6 @@
                 const adsWatched = parseInt(localStorage.getItem('adsWatched'));
                 const referrals = parseInt(localStorage.getItem('totalReferrals'));
                 const weeklyEarnings = JSON.parse(localStorage.getItem('weeklyEarnings'));
-                const user = JSON.parse(localStorage.getItem('user'));
 
                 const formattedEarnings = earnings.toFixed(2);
 
@@ -623,19 +504,6 @@
                 document.getElementById('total-earnings').textContent = `BDT ${formattedEarnings}`;
                 document.getElementById('ads-watched').textContent = adsWatched;
                 document.getElementById('total-referrals').textContent = referrals;
-
-                // Update Referral Link
-                const referralLinkBox = document.getElementById('referral-link-box');
-                const copyReferralBtn = document.getElementById('copy-referral-btn');
-                if (user.id !== 'Not logged in') {
-                    const telegramBotUsername = 'MoneyTagg_Bot';
-                    const baseLink = `https://t.me/${telegramBotUsername}?start=${user.id}`;
-                    referralLinkBox.textContent = baseLink;
-                    copyReferralBtn.disabled = false;
-                } else {
-                    referralLinkBox.textContent = 'Login with Telegram to get your referral link.';
-                    copyReferralBtn.disabled = true;
-                }
 
                 // Update Earn Page
                 document.getElementById('ad-progress-text').textContent = `Completed: ${adsWatched} / ${DAILY_ADS_LIMIT}`;
@@ -653,7 +521,7 @@
                 }
 
                 const chartContainer = document.getElementById('earning-chart');
-                chartContainer.innerHTML = '';
+                chartContainer.innerHTML = ''; // Clear previous bars
                 const days = ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
                 weeklyEarnings.forEach((earning, index) => {
                     const bar = document.createElement('div');
@@ -676,12 +544,6 @@
                 }
 
                 // Update Profile Page
-                const fullName = user.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : user.name;
-                document.getElementById('profile-name').textContent = fullName;
-                document.getElementById('profile-username').textContent = user.username ? `@${user.username}` : '';
-                document.getElementById('profile-pic').src = user.photo_url;
-                document.getElementById('telegram-id').textContent = user.id;
-
                 document.getElementById('profile-balance').textContent = `BDT ${formattedEarnings}`;
                 document.getElementById('profile-earnings').textContent = `BDT ${formattedEarnings}`;
                 document.getElementById('profile-ads-watched').textContent = adsWatched;
@@ -713,26 +575,30 @@
             });
 
             // --- Event Listeners for Buttons ---
-            watchAdBtn.addEventListener('click', async () => {
+            watchAdBtn.addEventListener('click', () => {
                 const adsWatched = parseInt(localStorage.getItem('adsWatched'));
                 if (adsWatched >= DAILY_ADS_LIMIT) {
                     alert('আপনার দৈনিক বিজ্ঞাপনের সীমা পৌঁছে গেছে।');
-                    return;
-                }
-                
-                const user = JSON.parse(localStorage.getItem('user'));
-                if (user.id === 'Not logged in') {
-                    alert('বিজ্ঞাপন দেখতে হলে প্রথমে টেলিগ্রাম থেকে লগইন করতে হবে।');
                     return;
                 }
 
                 watchAdBtn.textContent = 'বিজ্ঞাপন লোড হচ্ছে...';
                 watchAdBtn.disabled = true;
 
-                // Call the ad SDK and then update backend
+                // Call the ad SDK function
                 if (typeof show_9702412 === 'function') {
-                    show_9702412().then(async () => {
-                        await updateAdWatchCountOnBackend(user.id);
+                    show_9702412().then(() => {
+                        let earnings = parseFloat(localStorage.getItem('earnings'));
+                        let currentAdsWatched = parseInt(localStorage.getItem('adsWatched'));
+                        
+                        earnings += AD_REWARD;
+                        currentAdsWatched++;
+                        
+                        localStorage.setItem('earnings', earnings);
+                        localStorage.setItem('adsWatched', currentAdsWatched);
+                        
+                        updateUI();
+                        alert(`বিজ্ঞাপনটি দেখার জন্য আপনি BDT ${AD_REWARD} পেয়েছেন!`);
                     }).catch(e => {
                         console.error('Ad playback error:', e);
                         alert('বিজ্ঞাপনটি দেখাতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
@@ -740,39 +606,21 @@
                         updateUI();
                     });
                 } else {
+                    // Fallback if ad SDK is not loaded
                     console.error('Ad SDK not found. Simulating ad watch.');
-                    await updateAdWatchCountOnBackend(user.id);
+                    let earnings = parseFloat(localStorage.getItem('earnings'));
+                    let currentAdsWatched = parseInt(localStorage.getItem('adsWatched'));
+                    
+                    earnings += AD_REWARD;
+                    currentAdsWatched++;
+                    
+                    localStorage.setItem('earnings', earnings);
+                    localStorage.setItem('adsWatched', currentAdsWatched);
+                    
+                    updateUI();
+                    alert(`বিজ্ঞাপনটি দেখার জন্য আপনি BDT ${AD_REWARD} পেয়েছেন!`);
                 }
             });
-
-            // New function to update ad watch count on backend
-            async function updateAdWatchCountOnBackend(telegramId) {
-                try {
-                    const response = await fetch(`${BACKEND_URL}/watch-ad`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ telegramId: telegramId })
-                    });
-                    const data = await response.json();
-
-                    if (data.success) {
-                        // Update local storage with new data from backend
-                        localStorage.setItem('earnings', data.newEarnings);
-                        localStorage.setItem('adsWatched', data.newAdsWatched);
-                        updateUI();
-                        alert(`বিজ্ঞাপনটি দেখার জন্য আপনি BDT ${AD_REWARD} পেয়েছেন!`);
-                    } else {
-                        alert('আপনার ডেটা আপডেট করতে সমস্যা হয়েছে।');
-                    }
-                } catch (error) {
-                    console.error('Error updating ad watch count:', error);
-                    alert('সার্ভারের সাথে যোগাযোগ করা যাচ্ছে না।');
-                } finally {
-                    updateUI(); // Ensure UI is updated
-                }
-            }
             
             startEarningBtn.addEventListener('click', () => {
                 showPage('earn-page');
@@ -784,34 +632,14 @@
                 updateUI();
             });
 
-            copyReferralBtn.addEventListener('click', () => {
-                const referralLink = document.getElementById('referral-link-box').textContent;
-                navigator.clipboard.writeText(referralLink).then(() => {
-                    alert('Referral link copied to clipboard!');
-                    copyReferralBtn.textContent = 'Copied!';
-                    setTimeout(() => {
-                        copyReferralBtn.innerHTML = `<span class="material-icons" style="font-size: 16px; vertical-align: middle;">content_copy</span> Copy Link`;
-                    }, 2000);
-                }).catch(err => {
-                    console.error('Failed to copy text: ', err);
-                    alert('Failed to copy link.');
-                });
-            });
-
             // --- Withdraw Form Submission Logic ---
-            withdrawForm.addEventListener('submit', async (e) => {
+            withdrawForm.addEventListener('submit', (e) => {
                 e.preventDefault();
 
                 const earnings = parseFloat(localStorage.getItem('earnings'));
                 const amount = parseFloat(document.getElementById('withdraw-amount').value);
                 const accountNumber = document.getElementById('account-number').value;
                 const withdrawMethod = document.getElementById('withdraw-method').value;
-                const user = JSON.parse(localStorage.getItem('user'));
-
-                if (user.id === 'Not logged in') {
-                    alert('উইথড্র করতে হলে প্রথমে টেলিগ্রাম থেকে লগইন করতে হবে।');
-                    return;
-                }
 
                 if (earnings < amount) {
                     alert('আপনার অ্যাকাউন্টে যথেষ্ট ব্যালেন্স নেই।');
@@ -822,36 +650,39 @@
                     alert(`উইথড্র করার জন্য ন্যূনতম পরিমাণ BDT ${MIN_WITHDRAW_AMOUNT}।`);
                     return;
                 }
-                
-                // IMPORTANT: Send withdraw request to backend
-                try {
-                    const response = await fetch(`${BACKEND_URL}/withdraw`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            telegramId: user.id,
-                            amount: amount,
-                            method: withdrawMethod,
-                            account: accountNumber
-                        })
-                    });
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        localStorage.setItem('earnings', data.newEarnings);
-                        updateUI();
-                        alert(data.message);
-                        withdrawForm.reset();
-                    } else {
-                        alert(data.message);
-                    }
-                } catch (error) {
-                    console.error('Error submitting withdraw request:', error);
-                    alert('উইথড্র অনুরোধ জমা দিতে সমস্যা হয়েছে।');
-                }
+
+                // --- IMPORTANT: This is a placeholder. A real-world application requires a backend to handle this. ---
+                // Here, you would send a request to your server with the withdrawal details.
+                // Example:
+                // fetch('/api/withdraw', {
+                //     method: 'POST',
+                //     headers: { 'Content-Type': 'application/json' },
+                //     body: JSON.stringify({ amount, accountNumber, method: withdrawMethod })
+                // }).then(response => response.json())
+                //   .then(data => {
+                //       if (data.success) {
+                //           alert('আপনার উইথড্র অনুরোধ সফলভাবে জমা হয়েছে।');
+                //           // Deduct the amount from the local storage after server confirmation
+                //           // let newEarnings = earnings - amount;
+                //           // localStorage.setItem('earnings', newEarnings);
+                //           // updateUI();
+                //           withdrawForm.reset();
+                //       } else {
+                //           alert('উইথড্র অনুরোধ জমা দিতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
+                //       }
+                //   });
+
+                // Since we don't have a backend, we'll just simulate the process.
+                alert(`আপনার উইথড্র অনুরোধ (${withdrawMethod}: ${accountNumber}) সফলভাবে জমা হয়েছে।`);
+                // Simulate deduction for demo purposes
+                let newEarnings = earnings - amount;
+                localStorage.setItem('earnings', newEarnings);
+                updateUI();
+                withdrawForm.reset();
             });
+
+            // --- Initial Load ---
+            updateUI();
         });
     </script>
 </body>
