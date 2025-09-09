@@ -6,6 +6,10 @@
     <title>My Earning App</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- টেলিগ্রাম ওয়েব অ্যাপের জন্য প্রয়োজনীয় স্ক্রিপ্ট -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
     <style>
         :root {
             --primary-color: #007bff;
@@ -35,27 +39,36 @@
             flex-direction: column;
         }
 
+        /* পরিবর্তিত হেডার স্টাইল */
         .header {
             display: flex;
             align-items: center;
-            padding: 15px;
+            padding: 10px 15px;
             background-color: var(--card-background);
             border-bottom: 1px solid var(--border-color);
             position: sticky;
             top: 0;
             z-index: 100;
         }
-
-        .header-icon {
-            font-size: 28px;
-            color: var(--primary-color);
-            margin-right: 10px;
+        
+        .header-profile-pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 12px;
+            border: 2px solid var(--primary-color);
         }
 
-        .header-title {
-            font-size: 20px;
+        .header-user-info h3 {
+            margin: 0;
+            font-size: 16px;
             font-weight: 600;
-            color: var(--text-color);
+        }
+        
+        .header-user-info p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--light-text-color);
         }
 
         .content {
@@ -313,8 +326,11 @@
 <body>
     <div class="container">
         <header class="header">
-            <span class="material-icons header-icon">rocket_launch</span>
-            <span class="header-title">My Earning App</span>
+            <img id="header-profile-pic" src="https://via.placeholder.com/40" alt="Profile" class="header-profile-pic">
+            <div class="header-user-info">
+                <h3 id="header-user-name">User</h3>
+                <p>Welcome to the Earning App!</p>
+            </div>
         </header>
 
         <main class="content">
@@ -420,10 +436,10 @@
             <section id="profile-page" class="page">
                 <div class="card" style="padding: 30px;">
                     <div style="width: 80px; height: 80px; border-radius: 50%; background-color: #eee; margin: 0 auto 15px; overflow: hidden; border: 2px solid var(--primary-color);">
-                        <img src="https://via.placeholder.com/80" alt="Profile Picture" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img id="profile-page-pic" src="https://via.placeholder.com/80" alt="Profile Picture" style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
-                    <h3 style="margin: 0; font-weight: 600;">Users</h3>
-                    <p style="margin: 5px 0 0; color: var(--light-text-color); font-size: 14px;">@Teligram</p>
+                    <h3 id="profile-user-name" style="margin: 0; font-weight: 600;">User</h3>
+                    <p id="profile-user-username" style="margin: 5px 0 0; color: var(--light-text-color); font-size: 14px;">@telegram</p>
                 </div>
                 <div class="profile-info">
                     <h4 style="margin-top: 0;">My Profile</h4>
@@ -467,10 +483,26 @@
         </nav>
     </div>
 
+    <!-- 
+        =====================================================================
+        ====== অ্যাড নেটওয়ার্কের SDK বসানোর জায়গা (প্রথম অংশ) ======
+        =====================================================================
+        এখানে আপনার পছন্দের অ্যাড নেটওয়ার্কের দেওয়া <script> ট্যাগটি বসাতে হবে।
+        নিচের লাইনটি একটি উদাহরণ মাত্র। আপনি এটিকে পরিবর্তন করে আপনার নিজের কোড বসাবেন।
+        এই কোডটি আপনার অ্যাপে বিজ্ঞাপন লোড করার জন্য অপরিহার্য।
+    -->
     <script src='//libtl.com/sdk.js' data-zone='9702412' data-sdk='show_9702412'></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // --- টেলিগ্রাম ইন্টিগ্রেশন শুরু ---
+            const tg = window.Telegram.WebApp;
+            tg.ready();
+            tg.expand();
+            const userData = tg.initDataUnsafe.user;
+            const defaultProfilePic = 'https://via.placeholder.com/80';
+            // --- টেলিগ্রাম ইন্টিগ্রেশন শেষ ---
+
             const navItems = document.querySelectorAll('.nav-item');
             const pages = document.querySelectorAll('.page');
             const watchAdBtn = document.getElementById('watch-ad-btn');
@@ -478,7 +510,6 @@
             const withdrawBtn = document.getElementById('withdraw-btn');
             const withdrawForm = document.getElementById('withdraw-form');
 
-            // --- Initial Data Setup ---
             const DAILY_ADS_LIMIT = 50;
             const AD_REWARD = 0.02; // BDT per ad
             const MIN_WITHDRAW_AMOUNT = 100;
@@ -487,10 +518,9 @@
                 localStorage.setItem('earnings', 0);
                 localStorage.setItem('adsWatched', 0);
                 localStorage.setItem('totalReferrals', 0);
-                localStorage.setItem('weeklyEarnings', JSON.stringify([10, 20, 40, 80, 60, 50, 90])); // Sample weekly data
+                localStorage.setItem('weeklyEarnings', JSON.stringify([10, 20, 40, 80, 60, 50, 90]));
             }
 
-            // --- UI Update Function ---
             function updateUI() {
                 const earnings = parseFloat(localStorage.getItem('earnings'));
                 const adsWatched = parseInt(localStorage.getItem('adsWatched'));
@@ -498,6 +528,29 @@
                 const weeklyEarnings = JSON.parse(localStorage.getItem('weeklyEarnings'));
 
                 const formattedEarnings = earnings.toFixed(2);
+
+                // --- টেলিগ্রাম ব্যবহারকারীর তথ্য আপডেট ---
+                if(userData) {
+                    const fullName = `${userData.first_name || ''} ${userData.last_name || ''}`.trim();
+                    document.getElementById('header-user-name').textContent = fullName || 'User';
+                    document.getElementById('profile-user-name').textContent = fullName || 'User';
+                    document.getElementById('profile-user-username').textContent = userData.username ? `@${userData.username}` : 'No username';
+                    
+                    // এখানে প্রোফাইল ছবি লোড করার জন্য fetch ব্যবহার করা হয়েছে, কারণ টেলিগ্রামের ছবি সরাসরি লোড হতে সমস্যা করতে পারে।
+                    // যদি ছবি না আসে, তাহলে এই অংশটি বাদ দিয়ে সরাসরি `src` সেট করতে পারেন।
+                    fetch(userData.photo_url)
+                        .then(response => response.blob())
+                        .then(blob => {
+                            const objectURL = URL.createObjectURL(blob);
+                            document.getElementById('header-profile-pic').src = objectURL;
+                            document.getElementById('profile-page-pic').src = objectURL;
+                        })
+                        .catch(() => {
+                            // যদি ছবি লোড না হয়, তাহলে ডিফল্ট ছবি দেখাবে
+                            document.getElementById('header-profile-pic').src = defaultProfilePic;
+                            document.getElementById('profile-page-pic').src = defaultProfilePic;
+                        });
+                }
 
                 // Update Home Page
                 document.getElementById('current-balance').textContent = `BDT ${formattedEarnings}`;
@@ -513,20 +566,19 @@
                 if (adsWatched >= DAILY_ADS_LIMIT) {
                     watchAdBtn.disabled = true;
                     watchAdBtn.textContent = 'দৈনিক সীমা পৌঁছে গেছে';
-                    watchAdBtn.style.backgroundColor = '#ccc';
                 } else {
                     watchAdBtn.disabled = false;
                     watchAdBtn.textContent = 'বিজ্ঞাপন দেখুন ও আয় করুন';
-                    watchAdBtn.style.backgroundColor = 'var(--primary-color)';
                 }
 
                 const chartContainer = document.getElementById('earning-chart');
-                chartContainer.innerHTML = ''; // Clear previous bars
+                chartContainer.innerHTML = '';
                 const days = ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
                 weeklyEarnings.forEach((earning, index) => {
                     const bar = document.createElement('div');
                     bar.className = 'chart-bar';
-                    const height = (earning / Math.max(...weeklyEarnings)) * 100;
+                    const maxEarning = Math.max(...weeklyEarnings);
+                    const height = maxEarning > 0 ? (earning / maxEarning) * 100 : 0;
                     bar.style.height = `${height}%`;
                     bar.innerHTML = `<span class="chart-bar-label">${days[index]}</span>`;
                     chartContainer.appendChild(bar);
@@ -550,140 +602,104 @@
                 document.getElementById('profile-referrals').textContent = referrals;
             }
 
-            // --- Navigation Logic ---
             function showPage(targetPageId) {
                 navItems.forEach(nav => nav.classList.remove('active'));
                 pages.forEach(page => page.classList.remove('active'));
 
                 const activeNavItem = document.querySelector(`[data-page="${targetPageId}"]`);
-                if (activeNavItem) {
-                    activeNavItem.classList.add('active');
-                }
+                if (activeNavItem) activeNavItem.classList.add('active');
                 
                 const activePage = document.getElementById(targetPageId);
-                if (activePage) {
-                    activePage.classList.add('active');
-                }
+                if (activePage) activePage.classList.add('active');
             }
 
             navItems.forEach(item => {
                 item.addEventListener('click', () => {
-                    const targetPageId = item.getAttribute('data-page');
-                    showPage(targetPageId);
-                    updateUI(); // Update UI whenever a new page is shown
+                    showPage(item.getAttribute('data-page'));
+                    updateUI();
                 });
             });
 
-            // --- Event Listeners for Buttons ---
             watchAdBtn.addEventListener('click', () => {
-                const adsWatched = parseInt(localStorage.getItem('adsWatched'));
-                if (adsWatched >= DAILY_ADS_LIMIT) {
-                    alert('আপনার দৈনিক বিজ্ঞাপনের সীমা পৌঁছে গেছে।');
+                if (parseInt(localStorage.getItem('adsWatched')) >= DAILY_ADS_LIMIT) {
+                    tg.showAlert('আপনার দৈনিক বিজ্ঞাপনের সীমা পৌঁছে গেছে।');
                     return;
                 }
 
                 watchAdBtn.textContent = 'বিজ্ঞাপন লোড হচ্ছে...';
                 watchAdBtn.disabled = true;
 
-                // Call the ad SDK function
+                // --- অ্যাড নেটওয়ার্কের কোড কল করার জায়গা (দ্বিতীয় অংশ) ---
+                // ======================================================================
+                // এখানে আপনার অ্যাড নেটওয়ার্কের দেওয়া ফাংশনটি কল করতে হবে।
+                // নিচের 'show_9702412()' লাইনটি একটি উদাহরণ। 
+                // আপনি এটিকে পরিবর্তন করে আপনার অ্যাড নেটওয়ার্কের সঠিক কোডটি বসাবেন।
+                // এই কোডটিই ব্যবহারকারীকে বিজ্ঞাপন দেখাবে।
+                //
+                // ইউটিউব ভিডিওতে দেখানোর জন্য: "দেখুন, এই 'show_9702412()' ফাংশনটিই হলো মূল জিনিস। 
+                // আপনি যখন নতুন কোনো অ্যাড নেটওয়ার্ক ব্যবহার করবেন, তারা আপনাকে এরকমই একটি ফাংশন দেবে, 
+                // আর আপনাকে শুধু এই জায়গাটিতে সেটি বসিয়ে দিতে হবে।"
+                // ======================================================================
                 if (typeof show_9702412 === 'function') {
                     show_9702412().then(() => {
-                        let earnings = parseFloat(localStorage.getItem('earnings'));
-                        let currentAdsWatched = parseInt(localStorage.getItem('adsWatched'));
-                        
-                        earnings += AD_REWARD;
-                        currentAdsWatched++;
+                        let earnings = parseFloat(localStorage.getItem('earnings')) + AD_REWARD;
+                        let currentAdsWatched = parseInt(localStorage.getItem('adsWatched')) + 1;
                         
                         localStorage.setItem('earnings', earnings);
                         localStorage.setItem('adsWatched', currentAdsWatched);
                         
-                        updateUI();
-                        alert(`বিজ্ঞাপনটি দেখার জন্য আপনি BDT ${AD_REWARD} পেয়েছেন!`);
+                        tg.showAlert(`বিজ্ঞাপনটি দেখার জন্য আপনি BDT ${AD_REWARD.toFixed(2)} পেয়েছেন!`);
                     }).catch(e => {
-                        console.error('Ad playback error:', e);
-                        alert('বিজ্ঞাপনটি দেখাতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
+                        tg.showAlert('বিজ্ঞাপনটি দেখাতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
                     }).finally(() => {
                         updateUI();
                     });
                 } else {
-                    // Fallback if ad SDK is not loaded
-                    console.error('Ad SDK not found. Simulating ad watch.');
-                    let earnings = parseFloat(localStorage.getItem('earnings'));
-                    let currentAdsWatched = parseInt(localStorage.getItem('adsWatched'));
-                    
-                    earnings += AD_REWARD;
-                    currentAdsWatched++;
+                    // Fallback for testing in browser
+                    let earnings = parseFloat(localStorage.getItem('earnings')) + AD_REWARD;
+                    let currentAdsWatched = parseInt(localStorage.getItem('adsWatched')) + 1;
                     
                     localStorage.setItem('earnings', earnings);
                     localStorage.setItem('adsWatched', currentAdsWatched);
                     
+                    alert(`(Test Mode) You earned BDT ${AD_REWARD.toFixed(2)}!`);
                     updateUI();
-                    alert(`বিজ্ঞাপনটি দেখার জন্য আপনি BDT ${AD_REWARD} পেয়েছেন!`);
                 }
             });
             
-            startEarningBtn.addEventListener('click', () => {
-                showPage('earn-page');
-                updateUI();
-            });
+            startEarningBtn.addEventListener('click', () => showPage('earn-page'));
+            withdrawBtn.addEventListener('click', () => showPage('withdraw-page'));
 
-            withdrawBtn.addEventListener('click', () => {
-                showPage('withdraw-page');
-                updateUI();
-            });
-
-            // --- Withdraw Form Submission Logic ---
             withdrawForm.addEventListener('submit', (e) => {
                 e.preventDefault();
 
                 const earnings = parseFloat(localStorage.getItem('earnings'));
                 const amount = parseFloat(document.getElementById('withdraw-amount').value);
-                const accountNumber = document.getElementById('account-number').value;
-                const withdrawMethod = document.getElementById('withdraw-method').value;
-
+                
                 if (earnings < amount) {
-                    alert('আপনার অ্যাকাউন্টে যথেষ্ট ব্যালেন্স নেই।');
+                    tg.showAlert('আপনার অ্যাকাউন্টে যথেষ্ট ব্যালেন্স নেই।');
                     return;
                 }
-
                 if (amount < MIN_WITHDRAW_AMOUNT) {
-                    alert(`উইথড্র করার জন্য ন্যূনতম পরিমাণ BDT ${MIN_WITHDRAW_AMOUNT}।`);
+                    tg.showAlert(`উইথড্র করার জন্য ন্যূনতম পরিমাণ BDT ${MIN_WITHDRAW_AMOUNT}।`);
                     return;
                 }
 
-                // --- IMPORTANT: This is a placeholder. A real-world application requires a backend to handle this. ---
-                // Here, you would send a request to your server with the withdrawal details.
-                // Example:
-                // fetch('/api/withdraw', {
-                //     method: 'POST',
-                //     headers: { 'Content-Type': 'application/json' },
-                //     body: JSON.stringify({ amount, accountNumber, method: withdrawMethod })
-                // }).then(response => response.json())
-                //   .then(data => {
-                //       if (data.success) {
-                //           alert('আপনার উইথড্র অনুরোধ সফলভাবে জমা হয়েছে।');
-                //           // Deduct the amount from the local storage after server confirmation
-                //           // let newEarnings = earnings - amount;
-                //           // localStorage.setItem('earnings', newEarnings);
-                //           // updateUI();
-                //           withdrawForm.reset();
-                //       } else {
-                //           alert('উইথড্র অনুরোধ জমা দিতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
-                //       }
-                //   });
-
-                // Since we don't have a backend, we'll just simulate the process.
-                alert(`আপনার উইথড্র অনুরোধ (${withdrawMethod}: ${accountNumber}) সফলভাবে জমা হয়েছে।`);
-                // Simulate deduction for demo purposes
-                let newEarnings = earnings - amount;
-                localStorage.setItem('earnings', newEarnings);
-                updateUI();
-                withdrawForm.reset();
+                // এখানে আপনার সার্ভারে ডেটা পাঠানোর কোড লিখতে হবে।
+                // এখন শুধু সিমুলেশন করা হচ্ছে।
+                tg.showConfirm(`আপনি কি আপনার উইথড্র অনুরোধ জমা দিতে চান?`, (confirmed) => {
+                    if (confirmed) {
+                        let newEarnings = earnings - amount;
+                        localStorage.setItem('earnings', newEarnings);
+                        updateUI();
+                        withdrawForm.reset();
+                        tg.showAlert('আপনার উইথড্র অনুরোধ সফলভাবে জমা হয়েছে।');
+                    }
+                });
             });
 
-            // --- Initial Load ---
             updateUI();
         });
     </script>
 </body>
-</html>
+                        </html>
