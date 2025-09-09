@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- টেলিগ্রাম ওয়েব অ্যাপের জন্য প্রয়োজনীয় স্ক্রিপ্ট -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <style>
@@ -39,7 +38,6 @@
             flex-direction: column;
         }
 
-        /* পরিবর্তিত হেডার স্টাইল */
         .header {
             display: flex;
             align-items: center;
@@ -57,6 +55,8 @@
             border-radius: 50%;
             margin-right: 12px;
             border: 2px solid var(--primary-color);
+            background-color: #eee;
+            object-fit: cover;
         }
 
         .header-user-info h3 {
@@ -129,7 +129,7 @@
             text-align: center;
         }
 
-        .dashboard-item .material-icons, .dashboard-item .fa-solid {
+        .dashboard-item .material-icons {
             font-size: 32px;
             margin-bottom: 10px;
             color: var(--primary-color);
@@ -156,6 +156,14 @@
             width: 100%;
             transition: background-color 0.3s, transform 0.2s;
             margin-top: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .primary-btn .material-icons, .secondary-btn .material-icons {
+            font-size: 20px;
         }
 
         .primary-btn {
@@ -171,6 +179,7 @@
         .primary-btn:disabled {
             background-color: #ccc;
             cursor: not-allowed;
+            transform: none;
         }
 
         .secondary-btn {
@@ -182,58 +191,6 @@
         .secondary-btn:hover {
             background-color: #e0e0e0;
             transform: translateY(-2px);
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-            text-align: left;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            box-sizing: border-box;
-            font-size: 16px;
-        }
-
-        .profile-info {
-            background-color: var(--card-background);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            margin-top: 20px;
-        }
-
-        .profile-info-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .profile-info-row:last-child {
-            border-bottom: none;
-        }
-
-        .profile-label {
-            font-size: 16px;
-            color: var(--text-color);
-        }
-
-        .profile-value {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--primary-color);
         }
         
         .progress-bar-container {
@@ -249,31 +206,6 @@
             background-color: var(--primary-color);
             width: 0;
             transition: width 0.5s ease-in-out;
-        }
-
-        .earning-chart {
-            display: flex;
-            justify-content: space-around;
-            align-items: flex-end;
-            height: 120px;
-            padding: 10px 0;
-        }
-
-        .chart-bar {
-            width: 18px;
-            background-color: var(--primary-color);
-            border-radius: 5px 5px 0 0;
-            position: relative;
-            transition: height 0.5s ease-in-out;
-        }
-
-        .chart-bar-label {
-            position: absolute;
-            bottom: -25px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 12px;
-            color: var(--light-text-color);
         }
 
         .footer-nav {
@@ -316,17 +248,80 @@
 
         .page {
             display: none;
+            animation: fadeIn 0.5s;
         }
 
         .page.active {
             display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Profile & Withdraw Page Styles */
+        .profile-info, .withdraw-form-container {
+            background-color: var(--card-background);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-top: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .profile-pic-container {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #eee;
+            margin: 0 auto 15px;
+            overflow: hidden;
+            border: 3px solid var(--primary-color);
+        }
+        .profile-pic {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .profile-info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .profile-info-row:last-child {
+            border-bottom: none;
+        }
+        .profile-label { font-size: 16px; color: var(--text-color); }
+        .profile-value { font-size: 16px; font-weight: 600; color: var(--primary-color); }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-sizing: border-box;
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header class="header">
-            <img id="header-profile-pic" src="https://via.placeholder.com/40" alt="Profile" class="header-profile-pic">
+            <img id="header-profile-pic" src="https://via.placeholder.com/40" alt="Profile" class="header-profile-pic" onerror="this.src='https://via.placeholder.com/40';">
             <div class="header-user-info">
                 <h3 id="header-user-name">User</h3>
                 <p>Welcome to the Earning App!</p>
@@ -342,10 +337,10 @@
                     </h2>
                     <div class="balance" id="current-balance">BDT 0.00</div>
                     <button class="primary-btn" id="start-earning-btn">
-                        Start Earning Now <span class="material-icons" style="font-size: 16px; vertical-align: middle;">arrow_forward</span>
+                        Start Earning Now <span class="material-icons">arrow_forward</span>
                     </button>
                     <button class="secondary-btn" id="withdraw-btn">
-                        Withdraw <span class="material-icons" style="font-size: 16px; vertical-align: middle;">currency_exchange</span>
+                        Withdraw <span class="material-icons">currency_exchange</span>
                     </button>
                 </div>
                 <div class="dashboard-grid">
@@ -384,13 +379,8 @@
                     </div>
                     <button class="primary-btn" id="watch-ad-btn">
                         বিজ্ঞাপন দেখুন ও আয় করুন
-                        <span class="material-icons" style="font-size: 16px; vertical-align: middle;">play_circle_filled</span>
+                        <span class="material-icons">play_circle_filled</span>
                     </button>
-                </div>
-                <div class="card" style="margin-top: 20px;">
-                    <h2 class="card-header">Weekly Activity</h2>
-                    <div class="earning-chart" id="earning-chart">
-                        </div>
                 </div>
             </section>
             
@@ -407,8 +397,8 @@
                     </div>
                 </div>
                 
-                <div class="profile-info">
-                    <h4 style="margin-top: 0;">Withdraw Details</h4>
+                <div class="withdraw-form-container">
+                    <h4 style="margin-top: 0; text-align: left;">Withdraw Details</h4>
                     <form id="withdraw-form">
                         <div class="form-group">
                             <label for="withdraw-method">Withdraw Method</label>
@@ -435,14 +425,14 @@
 
             <section id="profile-page" class="page">
                 <div class="card" style="padding: 30px;">
-                    <div style="width: 80px; height: 80px; border-radius: 50%; background-color: #eee; margin: 0 auto 15px; overflow: hidden; border: 2px solid var(--primary-color);">
-                        <img id="profile-page-pic" src="https://via.placeholder.com/80" alt="Profile Picture" style="width: 100%; height: 100%; object-fit: cover;">
+                    <div class="profile-pic-container">
+                        <img id="profile-page-pic" src="https://via.placeholder.com/80" alt="Profile Picture" class="profile-pic" onerror="this.src='https://via.placeholder.com/80';">
                     </div>
                     <h3 id="profile-user-name" style="margin: 0; font-weight: 600;">User</h3>
                     <p id="profile-user-username" style="margin: 5px 0 0; color: var(--light-text-color); font-size: 14px;">@telegram</p>
                 </div>
                 <div class="profile-info">
-                    <h4 style="margin-top: 0;">My Profile</h4>
+                    <h4 style="margin-top: 0; text-align:left;">My Profile</h4>
                     <div class="profile-info-row">
                         <span class="profile-label">Current Balance</span>
                         <span class="profile-value" id="profile-balance">BDT 0.00</span>
@@ -489,19 +479,17 @@
         =====================================================================
         এখানে আপনার পছন্দের অ্যাড নেটওয়ার্কের দেওয়া <script> ট্যাগটি বসাতে হবে।
         নিচের লাইনটি একটি উদাহরণ মাত্র। আপনি এটিকে পরিবর্তন করে আপনার নিজের কোড বসাবেন।
-        এই কোডটি আপনার অ্যাপে বিজ্ঞাপন লোড করার জন্য অপরিহার্য।
     -->
     <script src='//libtl.com/sdk.js' data-zone='9702412' data-sdk='show_9702412'></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- টেলিগ্রাম ইন্টিগ্রেশন শুরু ---
             const tg = window.Telegram.WebApp;
             tg.ready();
             tg.expand();
             const userData = tg.initDataUnsafe.user;
-            const defaultProfilePic = 'https://via.placeholder.com/80';
-            // --- টেলিগ্রাম ইন্টিগ্রেশন শেষ ---
+            const defaultProfilePic40 = 'https://via.placeholder.com/40';
+            const defaultProfilePic80 = 'https://via.placeholder.com/80';
 
             const navItems = document.querySelectorAll('.nav-item');
             const pages = document.querySelectorAll('.page');
@@ -515,41 +503,38 @@
             const MIN_WITHDRAW_AMOUNT = 100;
 
             if (!localStorage.getItem('earnings')) {
-                localStorage.setItem('earnings', 0);
-                localStorage.setItem('adsWatched', 0);
-                localStorage.setItem('totalReferrals', 0);
-                localStorage.setItem('weeklyEarnings', JSON.stringify([10, 20, 40, 80, 60, 50, 90]));
+                localStorage.setItem('earnings', '0');
+                localStorage.setItem('adsWatched', '0');
+                localStorage.setItem('totalReferrals', '0');
             }
 
             function updateUI() {
                 const earnings = parseFloat(localStorage.getItem('earnings'));
                 const adsWatched = parseInt(localStorage.getItem('adsWatched'));
                 const referrals = parseInt(localStorage.getItem('totalReferrals'));
-                const weeklyEarnings = JSON.parse(localStorage.getItem('weeklyEarnings'));
 
                 const formattedEarnings = earnings.toFixed(2);
 
-                // --- টেলিগ্রাম ব্যবহারকারীর তথ্য আপডেট ---
                 if(userData) {
                     const fullName = `${userData.first_name || ''} ${userData.last_name || ''}`.trim();
                     document.getElementById('header-user-name').textContent = fullName || 'User';
                     document.getElementById('profile-user-name').textContent = fullName || 'User';
                     document.getElementById('profile-user-username').textContent = userData.username ? `@${userData.username}` : 'No username';
                     
-                    // এখানে প্রোফাইল ছবি লোড করার জন্য fetch ব্যবহার করা হয়েছে, কারণ টেলিগ্রামের ছবি সরাসরি লোড হতে সমস্যা করতে পারে।
-                    // যদি ছবি না আসে, তাহলে এই অংশটি বাদ দিয়ে সরাসরি `src` সেট করতে পারেন।
-                    fetch(userData.photo_url)
-                        .then(response => response.blob())
-                        .then(blob => {
-                            const objectURL = URL.createObjectURL(blob);
-                            document.getElementById('header-profile-pic').src = objectURL;
-                            document.getElementById('profile-page-pic').src = objectURL;
-                        })
-                        .catch(() => {
-                            // যদি ছবি লোড না হয়, তাহলে ডিফল্ট ছবি দেখাবে
-                            document.getElementById('header-profile-pic').src = defaultProfilePic;
-                            document.getElementById('profile-page-pic').src = defaultProfilePic;
-                        });
+                    // ======================================================================
+                    // ====== প্রোফাইল ছবি দেখানোর কোড (CORS সমস্যার সমাধানসহ) ======
+                    // ======================================================================
+                    if (userData.photo_url) {
+                        // টেলিগ্রামের CORS পলিসি এড়ানোর জন্য একটি প্রক্সি ব্যবহার করা হয়েছে।
+                        const proxyUrl = 'https://api.allorigins.win/raw?url=';
+                        const proxiedPhotoUrl = `${proxyUrl}${encodeURIComponent(userData.photo_url)}`;
+                        
+                        document.getElementById('header-profile-pic').src = proxiedPhotoUrl;
+                        document.getElementById('profile-page-pic').src = proxiedPhotoUrl;
+                    } else {
+                        document.getElementById('header-profile-pic').src = defaultProfilePic40;
+                        document.getElementById('profile-page-pic').src = defaultProfilePic80;
+                    }
                 }
 
                 // Update Home Page
@@ -563,37 +548,14 @@
                 const progress = (adsWatched / DAILY_ADS_LIMIT) * 100;
                 document.getElementById('ad-progress-bar').style.width = `${progress}%`;
                 
-                if (adsWatched >= DAILY_ADS_LIMIT) {
-                    watchAdBtn.disabled = true;
-                    watchAdBtn.textContent = 'দৈনিক সীমা পৌঁছে গেছে';
-                } else {
-                    watchAdBtn.disabled = false;
-                    watchAdBtn.textContent = 'বিজ্ঞাপন দেখুন ও আয় করুন';
-                }
-
-                const chartContainer = document.getElementById('earning-chart');
-                chartContainer.innerHTML = '';
-                const days = ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-                weeklyEarnings.forEach((earning, index) => {
-                    const bar = document.createElement('div');
-                    bar.className = 'chart-bar';
-                    const maxEarning = Math.max(...weeklyEarnings);
-                    const height = maxEarning > 0 ? (earning / maxEarning) * 100 : 0;
-                    bar.style.height = `${height}%`;
-                    bar.innerHTML = `<span class="chart-bar-label">${days[index]}</span>`;
-                    chartContainer.appendChild(bar);
-                });
+                watchAdBtn.disabled = adsWatched >= DAILY_ADS_LIMIT;
+                watchAdBtn.querySelector('span').textContent = adsWatched >= DAILY_ADS_LIMIT ? 'cancel' : 'play_circle_filled';
+                if(adsWatched >= DAILY_ADS_LIMIT) watchAdBtn.childNodes[0].nodeValue = "দৈনিক সীমা পৌঁছে গেছে ";
 
                 // Update Withdraw Page
                 document.getElementById('withdraw-balance-display').textContent = `BDT ${formattedEarnings}`;
-                const submitBtn = document.getElementById('submit-withdraw-btn');
-                if (earnings < MIN_WITHDRAW_AMOUNT) {
-                    submitBtn.disabled = true;
-                    submitBtn.textContent = 'BDT 100 এর নিচে উইথড্র করা যাবে না';
-                } else {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Submit Withdraw Request';
-                }
+                document.getElementById('submit-withdraw-btn').disabled = earnings < MIN_WITHDRAW_AMOUNT;
+                if(earnings < MIN_WITHDRAW_AMOUNT) document.getElementById('submit-withdraw-btn').textContent = `ন্যূনতম BDT ${MIN_WITHDRAW_AMOUNT} প্রয়োজন`;
 
                 // Update Profile Page
                 document.getElementById('profile-balance').textContent = `BDT ${formattedEarnings}`;
@@ -614,85 +576,68 @@
             }
 
             navItems.forEach(item => {
-                item.addEventListener('click', () => {
-                    showPage(item.getAttribute('data-page'));
-                    updateUI();
-                });
+                item.addEventListener('click', () => showPage(item.getAttribute('data-page')));
             });
 
+            startEarningBtn.addEventListener('click', () => showPage('earn-page'));
+            withdrawBtn.addEventListener('click', () => showPage('withdraw-page'));
+            
             watchAdBtn.addEventListener('click', () => {
                 if (parseInt(localStorage.getItem('adsWatched')) >= DAILY_ADS_LIMIT) {
                     tg.showAlert('আপনার দৈনিক বিজ্ঞাপনের সীমা পৌঁছে গেছে।');
                     return;
                 }
 
-                watchAdBtn.textContent = 'বিজ্ঞাপন লোড হচ্ছে...';
                 watchAdBtn.disabled = true;
 
                 // --- অ্যাড নেটওয়ার্কের কোড কল করার জায়গা (দ্বিতীয় অংশ) ---
                 // ======================================================================
                 // এখানে আপনার অ্যাড নেটওয়ার্কের দেওয়া ফাংশনটি কল করতে হবে।
-                // নিচের 'show_9702412()' লাইনটি একটি উদাহরণ। 
-                // আপনি এটিকে পরিবর্তন করে আপনার অ্যাড নেটওয়ার্কের সঠিক কোডটি বসাবেন।
-                // এই কোডটিই ব্যবহারকারীকে বিজ্ঞাপন দেখাবে।
-                //
-                // ইউটিউব ভিডিওতে দেখানোর জন্য: "দেখুন, এই 'show_9702412()' ফাংশনটিই হলো মূল জিনিস। 
-                // আপনি যখন নতুন কোনো অ্যাড নেটওয়ার্ক ব্যবহার করবেন, তারা আপনাকে এরকমই একটি ফাংশন দেবে, 
-                // আর আপনাকে শুধু এই জায়গাটিতে সেটি বসিয়ে দিতে হবে।"
+                // নিচের 'show_9702412()' লাইনটি একটি উদাহরণ।
                 // ======================================================================
                 if (typeof show_9702412 === 'function') {
                     show_9702412().then(() => {
                         let earnings = parseFloat(localStorage.getItem('earnings')) + AD_REWARD;
                         let currentAdsWatched = parseInt(localStorage.getItem('adsWatched')) + 1;
                         
-                        localStorage.setItem('earnings', earnings);
-                        localStorage.setItem('adsWatched', currentAdsWatched);
+                        localStorage.setItem('earnings', earnings.toString());
+                        localStorage.setItem('adsWatched', currentAdsWatched.toString());
                         
                         tg.showAlert(`বিজ্ঞাপনটি দেখার জন্য আপনি BDT ${AD_REWARD.toFixed(2)} পেয়েছেন!`);
-                    }).catch(e => {
+                    }).catch(() => {
                         tg.showAlert('বিজ্ঞাপনটি দেখাতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
                     }).finally(() => {
                         updateUI();
                     });
                 } else {
-                    // Fallback for testing in browser
+                    // Fallback for testing in browser without Telegram
                     let earnings = parseFloat(localStorage.getItem('earnings')) + AD_REWARD;
                     let currentAdsWatched = parseInt(localStorage.getItem('adsWatched')) + 1;
-                    
-                    localStorage.setItem('earnings', earnings);
-                    localStorage.setItem('adsWatched', currentAdsWatched);
-                    
+                    localStorage.setItem('earnings', earnings.toString());
+                    localStorage.setItem('adsWatched', currentAdsWatched.toString());
                     alert(`(Test Mode) You earned BDT ${AD_REWARD.toFixed(2)}!`);
                     updateUI();
                 }
             });
-            
-            startEarningBtn.addEventListener('click', () => showPage('earn-page'));
-            withdrawBtn.addEventListener('click', () => showPage('withdraw-page'));
 
             withdrawForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-
-                const earnings = parseFloat(localStorage.getItem('earnings'));
                 const amount = parseFloat(document.getElementById('withdraw-amount').value);
                 
-                if (earnings < amount) {
-                    tg.showAlert('আপনার অ্যাকাউন্টে যথেষ্ট ব্যালেন্স নেই।');
-                    return;
-                }
-                if (amount < MIN_WITHDRAW_AMOUNT) {
-                    tg.showAlert(`উইথড্র করার জন্য ন্যূনতম পরিমাণ BDT ${MIN_WITHDRAW_AMOUNT}।`);
-                    return;
-                }
-
-                // এখানে আপনার সার্ভারে ডেটা পাঠানোর কোড লিখতে হবে।
-                // এখন শুধু সিমুলেশন করা হচ্ছে।
                 tg.showConfirm(`আপনি কি আপনার উইথড্র অনুরোধ জমা দিতে চান?`, (confirmed) => {
                     if (confirmed) {
-                        let newEarnings = earnings - amount;
-                        localStorage.setItem('earnings', newEarnings);
-                        updateUI();
+                        let newEarnings = parseFloat(localStorage.getItem('earnings')) - amount;
+                        localStorage.setItem('earnings', newEarnings.toString());
+                        
+                        tg.sendData(JSON.stringify({ 
+                            type: 'withdrawal', 
+                            amount: amount, 
+                            method: document.getElementById('withdraw-method').value,
+                            account: document.getElementById('account-number').value
+                        }));
+                        
                         withdrawForm.reset();
+                        updateUI();
                         tg.showAlert('আপনার উইথড্র অনুরোধ সফলভাবে জমা হয়েছে।');
                     }
                 });
@@ -702,4 +647,4 @@
         });
     </script>
 </body>
-                        </html>
+                                                                           </html>
